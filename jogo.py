@@ -15,6 +15,14 @@ verde = (0,255,0)
 azul = (0,0,255)
 azul_claro = (0,100,200)
 
+
+#definindo a contagem dos obstáculos que foram desviados
+def obstaculos_dodged(count):
+    font = pygame.font.SysFont(None, 100)
+    text = font.render('Dibrados: ' + str(count), True, verde)
+    gameDisplay.blit(text, (0,0))
+
+
 #a largura em pixels da imagem para uso posterior
 largura_passaro = 295
 
@@ -28,7 +36,7 @@ clock = pygame.time.Clock()
 #definindo os obstáculos
 def obstaculos(thingx, thingy, thingl, thinga, color):
     pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingl, thinga])
-
+ 
 
 #inserindo a imagem do pássaro e definindo suas coordenadas
 thrushimg = pygame.image.load("bird.png")
@@ -74,9 +82,9 @@ def main():
     #definindo a velocidade dos obstáculos
     obstaculo_speed = 7
     #definindo a largura e altura do obstáculos
-    obstaculo_width = 295
+    obstaculo_width = 200
     obstaculo_height = 100
-
+    dodged = 0
 
 
     #criando o main loop do jogo
@@ -107,6 +115,9 @@ def main():
 
         #chamando o pássaro
         bird(x,y)
+
+        #definindo número de obstaculos desviados
+        obstaculos_dodged(count=dodged)
         
         #usando x = 0 e a largura da tela subtraída da imagem para definir se o passaro bate nas bordas da janela ou nao
         if x > LARGURA - largura_passaro or x < 0:
@@ -116,6 +127,16 @@ def main():
         if obstaculo_starty > ALTURA:
             obstaculo_starty = 0 - obstaculo_height
             obstaculo_startx = random.randrange(0, LARGURA)
+            #registrando o numero de desvios
+            dodged += 1
+            #aumentando a velocidade a cada desvio
+            obstaculo_speed += 0.3
+            #aumentando/diminuindo o tamanho dos obstáculos
+            if dodged in range(10,20):
+                obstaculo_width += (dodged*1)
+            if dodged > 40:
+                obstaculo_width = 50
+
 
         #definindo a colisão dos obstaculos
         if y < obstaculo_starty + obstaculo_height:
@@ -124,14 +145,11 @@ def main():
                  print('colisão em x')
                  crash()
 
-
-
         #updatando para mostrar na tela todas as imagens
         pygame.display.update()
         clock.tick(60)
 
-        print(event)
-
+        
     pygame.quit()
     sys.exit()
 
