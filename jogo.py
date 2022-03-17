@@ -30,7 +30,6 @@ def obstaculos(thingx, thingy, thingl, thinga, color):
     pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingl, thinga])
 
 
-
 #inserindo a imagem do pássaro e definindo suas coordenadas
 thrushimg = pygame.image.load("bird.png")
 def bird(x,y):
@@ -75,7 +74,7 @@ def main():
     #definindo a velocidade dos obstáculos
     obstaculo_speed = 7
     #definindo a largura e altura do obstáculos
-    obstaculo_width = 100
+    obstaculo_width = 295
     obstaculo_height = 100
 
 
@@ -117,6 +116,15 @@ def main():
         if obstaculo_starty > ALTURA:
             obstaculo_starty = 0 - obstaculo_height
             obstaculo_startx = random.randrange(0, LARGURA)
+
+        #definindo a colisão dos obstaculos
+        if y < obstaculo_starty + obstaculo_height:
+            print('colisão em y')
+            if x + largura_passaro > obstaculo_startx and x < obstaculo_startx + obstaculo_width:
+                 print('colisão em x')
+                 crash()
+
+
 
         #updatando para mostrar na tela todas as imagens
         pygame.display.update()
