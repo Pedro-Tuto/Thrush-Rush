@@ -10,10 +10,13 @@ ALTURA = 1000
 #definindo as cores
 preto = (0,0,0)
 branco = (255,255,255)
-vermelho = (255,0,0)
-verde = (0,255,0)
+vermelho = (200,0,0)
+vermelho_claro = (255,0,0)
+verde = (0,200,0)
+verde_claro = (0,255,0)
 azul = (0,0,255)
 azul_claro = (0,100,200)
+roxo = (221,160,221)
 
 
 #definindo a contagem dos obstáculos que foram desviados
@@ -63,11 +66,46 @@ def mensagem_display(text):
     #reiniciando o jogo chamando o main()
     main()
 
-
 #definindo o que acontece quando o jogador bate
 def crash():
     mensagem_display('Você Bateu')
 
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+#definindo o menu do jogo
+def game_intro():
+    intro = True
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        gameDisplay.fill(roxo)
+        textoGrande = pygame.font.Font('freesansbold.ttf', 115)
+        textoSurperficie, textoRetangulo = text_objects("THRUSH RUSH!", textoGrande)
+        #centralizando a caixa de texto
+        textoRetangulo.center = ((LARGURA//2, ALTURA//2))
+        #fazendo a mensagem aparecer com .blit
+        gameDisplay.blit(textoSurperficie, textoRetangulo)
+        #criando botões para o menu
+        mouse = pygame.mouse.get_pos()
+        #print(mouse) 
+        #se a coordenada x do retangulo + a largura for maior que o valor x da posição do mouse
+        #E a coordenada y do retangulo + a altura for maior que o valor y da posição do mouse
+        if 155 + 400 > mouse[0] > 155 and 700 + 200 > mouse[1] > 700:
+            pygame.draw.rect(gameDisplay, verde_claro, (155,700,400,200))
+        else:
+            pygame.draw.rect(gameDisplay, verde, (155,700,400,200))
+        if 955 + 700 > mouse[0] > 955 and 700 + 200 > mouse[1] > 700:    
+            pygame.draw.rect(gameDisplay, vermelho_claro, (955,700,400,200))
+        else:
+            pygame.draw.rect(gameDisplay, vermelho, (955,700,400,200))
+
+
+        pygame.display.update()
+        clock.tick(15)  
+
+    
+#---------------------------------------------------------------------------------------------------------------------------------------------------
 
 def main():
     
@@ -86,11 +124,22 @@ def main():
     obstaculo_height = 100
     dodged = 0
 
-
     #criando o main loop do jogo
     gameEnd = False
     while not gameEnd:
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_LEFT]:
+            x += -30
+        elif keys[pygame.K_RIGHT]:
+            x += 30
+
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        
+        '''for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -104,7 +153,8 @@ def main():
             if event.type == pygame.KEYUP:   
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     x_move = 0
-            x += x_move
+            x += x_move'''
+            
         #preenchendo o fundo com azul claro
         gameDisplay.fill(azul_claro)
 
@@ -137,7 +187,6 @@ def main():
             if dodged > 40:
                 obstaculo_width = 50
 
-
         #definindo a colisão dos obstaculos
         if y < obstaculo_starty + obstaculo_height:
             print('colisão em y')
@@ -148,11 +197,13 @@ def main():
         #updatando para mostrar na tela todas as imagens
         pygame.display.update()
         clock.tick(60)
+        print(clock.get_fps())
 
         
     pygame.quit()
     sys.exit()
 
+game_intro()
 main()
 
 
