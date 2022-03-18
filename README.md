@@ -7,3 +7,5 @@ https://pt.wikipedia.org/wiki/Turdidae
 
 The bird drawing was made by myself, using Paint. Inspired on the Varied Thrush, Ixoreus naevius. 
 https://en.wikipedia.org/wiki/Varied_thrush
+
+I just wanted a bird with a name that rhymes with Rush.
