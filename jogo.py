@@ -48,7 +48,7 @@ def bird(x,y):
 
 #definindo o objeto de texto
 def text_objects(text, font):
-    textoSuperficie = font.render(text, True, vermelho)
+    textoSuperficie = font.render(text, True, preto)
     return textoSuperficie, textoSuperficie.get_rect()
 
 
@@ -66,6 +66,36 @@ def mensagem_display(text):
     #reiniciando o jogo chamando o main()
     main()
 
+#definindo a função dos botões
+def button(msg, x, y, w, h, ic, ac, action = None):
+
+    mouse = pygame.mouse.get_pos()
+    #print(mouse) 
+    #definindo o clique
+    click = pygame.mouse.get_pressed()
+    #print(click)
+
+    #se a coordenada x do retangulo + a largura for maior que o valor x da posição do mouse
+    #E a coordenada y do retangulo + a altura for maior que o valor y da posição do mouse
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
+        pygame.draw.rect(gameDisplay, ac, (x,y,w,h))
+        if click[0] == 1 and action != None:
+            if action == 'play':
+                main()
+            elif action == 'quit':
+                pygame.quit()
+                sys.exit()
+
+    else:
+        pygame.draw.rect(gameDisplay, ic, (x,y,w,h))
+    #inserindo texto no botão
+    textoPequeno = pygame.font.Font("freesansbold.ttf", 50)
+    textoSurperficie, textoRetangulo = text_objects(msg, textoPequeno)
+    #centralizando utilizando x e largura
+    textoRetangulo.center = ((x+(w/2)), (y +(h/2)))
+    #fazendo o texto aparecer
+    gameDisplay.blit(textoSurperficie, textoRetangulo)
+    
 #definindo o que acontece quando o jogador bate
 def crash():
     mensagem_display('Você Bateu')
@@ -86,25 +116,17 @@ def game_intro():
         textoRetangulo.center = ((LARGURA//2, ALTURA//2))
         #fazendo a mensagem aparecer com .blit
         gameDisplay.blit(textoSurperficie, textoRetangulo)
-        #criando botões para o menu
-        mouse = pygame.mouse.get_pos()
-        #print(mouse) 
-        #se a coordenada x do retangulo + a largura for maior que o valor x da posição do mouse
-        #E a coordenada y do retangulo + a altura for maior que o valor y da posição do mouse
-        if 155 + 400 > mouse[0] > 155 and 700 + 200 > mouse[1] > 700:
-            pygame.draw.rect(gameDisplay, verde_claro, (155,700,400,200))
-        else:
-            pygame.draw.rect(gameDisplay, verde, (155,700,400,200))
-        if 955 + 700 > mouse[0] > 955 and 700 + 200 > mouse[1] > 700:    
-            pygame.draw.rect(gameDisplay, vermelho_claro, (955,700,400,200))
-        else:
-            pygame.draw.rect(gameDisplay, vermelho, (955,700,400,200))
+
+        #chamando a função botão e escolhemos os parâmetros
+        button("START", 155,700,400,200,verde,verde_claro,'play')
+        button("QUIT", 955,700,400,200,vermelho,vermelho_claro,'quit')
+
+        
 
 
         pygame.display.update()
         clock.tick(15)  
 
-    
 #---------------------------------------------------------------------------------------------------------------------------------------------------
 
 def main():
