@@ -18,13 +18,18 @@ azul = (0,0,255)
 azul_claro = (0,100,200)
 roxo = (221,160,221)
 
+#definindo o ícone da janela do jogo
+icon = pygame.image.load("bird.png")
+pygame.display.set_icon(icon)
+
+#definindo a variável pause
+pause = True
 
 #definindo a contagem dos obstáculos que foram desviados
 def obstaculos_dodged(count):
     font = pygame.font.SysFont(None, 100)
     text = font.render('Dibrados: ' + str(count), True, verde)
     gameDisplay.blit(text, (0,0))
-
 
 #a largura em pixels da imagem para uso posterior
 largura_passaro = 295
@@ -35,6 +40,11 @@ gameDisplay = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption('Thrush Rush')
 clock = pygame.time.Clock()
 
+#definindo os sons
+crash_sound = pygame.mixer.Sound("crash1.mp3")
+swoosh = pygame.mixer.Sound("Swoosh.mp3")
+title = pygame.mixer.Sound("sandman.mp3")
+pygame.mixer.music.load("toto.mp3")
 
 #definindo os obstáculos
 def obstaculos(thingx, thingy, thingl, thinga, color):
@@ -45,6 +55,8 @@ def obstaculos(thingx, thingy, thingl, thinga, color):
 thrushimg = pygame.image.load("bird.png")
 def bird(x,y):
     gameDisplay.blit(thrushimg,(x,y))
+
+
 
 #definindo o objeto de texto
 def text_objects(text, font):
@@ -85,6 +97,10 @@ def button(msg, x, y, w, h, ic, ac, action = None):
             elif action == 'quit':
                 pygame.quit()
                 sys.exit()
+            elif action == 'unpause':
+                unpause() 
+            elif action == 'main':
+                main()   
 
     else:
         pygame.draw.rect(gameDisplay, ic, (x,y,w,h))
@@ -95,14 +111,68 @@ def button(msg, x, y, w, h, ic, ac, action = None):
     textoRetangulo.center = ((x+(w/2)), (y +(h/2)))
     #fazendo o texto aparecer
     gameDisplay.blit(textoSurperficie, textoRetangulo)
+#----------------------------------------------------------------------------------------------------------------------------------------------------
     
 #definindo o que acontece quando o jogador bate
 def crash():
-    mensagem_display('Você Bateu')
+    #pygame.mixer.music.stop()
+    pygame.mixer.Sound.play(crash_sound)
+
+    textoGrande = pygame.font.Font('freesansbold.ttf', 115)
+    textoSurperficie, textoRetangulo = text_objects("VOCÊ BATEU", textoGrande)
+    #centralizando a caixa de texto
+    textoRetangulo.center = ((LARGURA//2, ALTURA//2))
+    #fazendo a mensagem aparecer com .blit
+    gameDisplay.blit(textoSurperficie, textoRetangulo)
+    
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        #chamando a função botão e escolhemos os parâmetros
+        button("DE NOVO", 155,700,400,200,verde,verde_claro,'main')
+        button("SAIR", 955,700,400,200,vermelho,vermelho_claro,'quit')
+
+        pygame.display.update()
+        clock.tick(15)
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+
+def quitgame():
+    pygame.quit()
+    sys.exit()
+
+def unpause():
+    global pause
+    pause = False
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+    
+def paused():
+    while pause:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        textoGrande = pygame.font.Font('freesansbold.ttf', 115)
+        textoSurperficie, textoRetangulo = text_objects("PAUSADO", textoGrande)
+        #centralizando a caixa de texto
+        textoRetangulo.center = ((LARGURA//2, ALTURA//2))
+        #fazendo a mensagem aparecer com .blit
+        gameDisplay.blit(textoSurperficie, textoRetangulo)
+
+        #chamando a função botão e escolhemos os parâmetros
+        button("CONTINUAR", 155,700,400,200,verde,verde_claro,'unpause')
+        button("SAIR", 955,700,400,200,vermelho,vermelho_claro,'quit')
+
+        pygame.display.update()
+        clock.tick(15)  
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 #definindo o menu do jogo
 def game_intro():
+    pygame.mixer.Sound.play(title)
     intro = True
     while intro:
         for event in pygame.event.get():
@@ -119,10 +189,7 @@ def game_intro():
 
         #chamando a função botão e escolhemos os parâmetros
         button("START", 155,700,400,200,verde,verde_claro,'play')
-        button("QUIT", 955,700,400,200,vermelho,vermelho_claro,'quit')
-
-        
-
+        button("SAIR", 955,700,400,200,vermelho,vermelho_claro,'quit')
 
         pygame.display.update()
         clock.tick(15)  
@@ -130,8 +197,11 @@ def game_intro():
 #---------------------------------------------------------------------------------------------------------------------------------------------------
 
 def main():
-    
-    x = (LARGURA * 0.38)
+    pygame.mixer.Sound.stop(title)
+    global pause
+    pygame.mixer.music.play(-1)
+
+    x = (LARGURA * 0.40)
     y = (ALTURA * 0.70)
 
     x_move = 0
@@ -150,6 +220,12 @@ def main():
     gameEnd = False
     while not gameEnd:
         keys = pygame.key.get_pressed()
+
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    pause = True
+                    paused()
 
         if keys[pygame.K_LEFT]:
             x += -30
@@ -201,6 +277,7 @@ def main():
             obstaculo_startx = random.randrange(0, LARGURA)
             #registrando o numero de desvios
             dodged += 1
+            pygame.mixer.Sound.play(swoosh)
             #aumentando a velocidade a cada desvio
             obstaculo_speed += 0.3
             #aumentando/diminuindo o tamanho dos obstáculos
@@ -227,5 +304,3 @@ def main():
 
 game_intro()
 main()
-
-
